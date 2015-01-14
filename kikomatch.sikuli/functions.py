@@ -4,6 +4,7 @@ def getTile(img):
 	x = img.getTarget().getX()
 	y = img.getTarget().getY()
 	return capture(x-w/2,y-h/2,w,h)
+
 def clickPairs(tiles,pairs,unclearedtile):
 	clicked=0
 	if exists(unclearedtile) == None:
@@ -52,6 +53,9 @@ def revealTiles(tiles):
 		#revealed[ti].highlight(0.5)
 	#popup(str(revealed[0]))
 	#print revealed
+	if len(tiles)%2==1:
+		click(tiles[0])
+		time.sleep(0.1)
 	return revealed
 
 def findPairs(revealed):
