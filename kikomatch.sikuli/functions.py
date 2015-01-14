@@ -6,6 +6,9 @@ def getTile(img):
 	return capture(x-w/2,y-h/2,w,h)
 def clickPairs(tiles,pairs,unclearedtile):
 	clicked=0
+	if exists(unclearedtile) == None:
+		print "Could not find an uncleared tile. Exiting."
+		return
 	for p in pairs:
 		t0 = tiles[p[0]]
 		t1 = tiles[p[1]]
@@ -15,7 +18,8 @@ def clickPairs(tiles,pairs,unclearedtile):
 		#t1.waitVanish(t1,0.5)
 		click(t1)
 		clicked +=1
-	print clicked, len(tiles) 
+	print "Total number of tiles clicked on:",clicked
+	print "Total number of tiles:",len(tiles) 
 
 def makeGrid(region,tile):
 	kikoIter = region.findAll(tile)
@@ -29,7 +33,7 @@ def makeGrid(region,tile):
 	return kikoList
 
 def revealTiles(tiles):
-	print len(tiles)
+	print "Total number of tiles:",len(tiles)
 	revealed = []
 	#for t in tiles:
 		#t.onChange()
@@ -41,10 +45,13 @@ def revealTiles(tiles):
 		#t.onChange()
 		#t.waitVanish(t,0.5)
 		click(tiles[ti])
-		hover(tiles[(ti+1)%len(tiles)])
+		time.sleep(0.1)
+		#hover(tiles[(ti+1)%len(tiles)])
 		revealed.append(getTile(tiles[ti]))
+		print "Just captured:",revealed[ti]
+		#revealed[ti].highlight(0.5)
 	#popup(str(revealed[0]))
-	print revealed
+	#print revealed
 	return revealed
 
 def findPairs(revealed):
@@ -63,5 +70,5 @@ def findPairs(revealed):
 				break
 		#ctf.destroy()
 		ci+=1
-	print pairs
+	#print pairs
 	return pairs

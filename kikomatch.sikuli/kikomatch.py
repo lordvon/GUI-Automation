@@ -1,20 +1,16 @@
 import os
 import shutil
 import sys
+import time
 
-execfile('functions.py')
-
-revealed = []
-# Function definitions
+idir = os.path.dirname(os.path.realpath(sys.argv[0]))
+execfile(idir+'/kikomatch.sikuli/functions.py')
 
 # Script
-Settings.MoveMouseDelay = 0.4
-Settings.MinSimilarity = 0.8
+Settings.MoveMouseDelay = 0.2
+Settings.MinSimilarity = 0.75
 
-#tmpimgs = "tmpimgs"
-#if not os.path.exists(tmpimgs):
-#    os.makedirs(tmpimgs)
-
+# User-defined regions
 kikoRegion = selectRegion("Select the region in which the tiles will appear.")
 if kikoRegion == None:
 	print "A region was not selected. Exiting."
@@ -24,16 +20,18 @@ if kikoRegion == None:
 	print "A region was not selected. Exiting."
 	sys.exit()
 
-#kikoRegion.onChange()
+
+
+#Test block
+#kikoIter = kikoRegion.findAll(kikoTile)
+#kikoList = sorted(list(kikoIter), key=lambda t: t.getTarget().getY())
+#print len(kikoList)
+
+
+
 click(kikoRegion)
-hover(kikoRegion)
-#onChangeFlag = False
-#while onChangeFlag:
-#	pass
+time.sleep(0.5)
 kikoList = makeGrid(kikoRegion,kikoTile)
 revealed = revealTiles(kikoList)
 pairs = findPairs(revealed)
 clickPairs(kikoList,pairs,kikoTile)
-
-#if os.path.exists(tmpimgs):
-#	shutil.rmtree(tmpimgs)
