@@ -1,0 +1,142 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>kikomatch.sikuli\functions.sikuli</h2> <a href="kikomatch.sikuli\functions.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="kw">def</span> getTile(img):
+        h = img.getH()
+        w = img.getW()
+        x = img.getTarget().getX()
+        y = img.getTarget().getY()
+        <span class="kw">return</span> <span class="skw">capture</span>(x-w/<span class="dig">2</span>,y-h/<span class="dig">2</span>,w,h)
+<span class="kw">def</span> clickPairs(tiles,pairs,unclearedtile):
+        clicked=<span class="dig">0</span>
+        <span class="kw">for</span> p <span class="kw">in</span> pairs:
+                t0 = tiles[p[<span class="dig">0</span>]]
+                t1 = tiles[p[<span class="dig">1</span>]]
+                <span class="cmt">#t0.waitVanish(t0,0.5)
+</span>                <span class="skw">click</span>(t0)
+                clicked +=<span class="dig">1</span>
+                <span class="cmt">#t1.waitVanish(t1,0.5)
+</span>                <span class="skw">click</span>(t1)
+                clicked +=<span class="dig">1</span>
+        <span class="kw">print</span> clicked, len(tiles)
+
+<span class="kw">def</span> makeGrid(region,tile):
+        kikoIter = region.findAll(tile)
+        kikoList = sorted(list(kikoIter), key=<span class="kw">lambda</span> t: t.getTarget().getY())
+        firstRowY = kikoList[<span class="dig">0</span>].getTarget().getY()
+        firstRow = filter(<span class="kw">lambda</span> t: t.getTarget().getY() == firstRowY, kikoList)
+        totalTiles = len(kikoList)
+        columns = len(firstRow)
+        <span class="cmt">#if totalTiles % columns != 0:
+</span>                <span class="cmt">#popup("Warning! The column count does not evenly divide into the total tile count!")
+</span>        <span class="kw">return</span> kikoList
+
+<span class="kw">def</span> revealTiles(tiles):
+        <span class="kw">print</span> len(tiles)
+        revealed = []
+        <span class="cmt">#for t in tiles:
+</span>                <span class="cmt">#t.onChange()
+</span>                <span class="cmt">#t.waitVanish(t,0.5)
+</span>                <span class="cmt">#click(t)
+</span>                <span class="cmt">#hover(t)
+</span>                <span class="cmt">#revealed.append(getTile(t))
+</span>        <span class="kw">for</span> ti <span class="kw">in</span> range(len(tiles)):
+                <span class="cmt">#t.onChange()
+</span>                <span class="cmt">#t.waitVanish(t,0.5)
+</span>                <span class="skw">click</span>(tiles[ti])
+                hover(tiles[(ti+<span class="dig">1</span>)%len(tiles)])
+                revealed.append(getTile(tiles[ti]))
+        <span class="cmt">#popup(str(revealed[0]))
+</span>        <span class="kw">print</span> revealed
+        <span class="kw">return</span> revealed
+
+<span class="kw">def</span> findPairs(revealed):
+        matched = [<span class="dig">0</span> <span class="kw">for</span> x <span class="kw">in</span> range(len(revealed))]
+        pairs = []
+        ci=<span class="dig">0</span>
+        <span class="kw">while</span> ci &lt; len(revealed):
+                ct = revealed[ci]
+                ctf = Finder(ct)
+                <span class="kw">for</span> t <span class="kw">in</span> range(ci+<span class="dig">1</span>,len(revealed)):
+                        matches = ctf.<span class="skw">find</span>(revealed[t])
+                        <span class="kw">if</span> ctf.hasNext() <span class="kw">and</span> matched[ci]==<span class="dig">0</span> <span class="kw">and</span> matched[t]==<span class="dig">0</span>:
+                                matched[ci]=<span class="dig">1</span>
+                                matched[t]=<span class="dig">1</span>
+                                pairs.append([ci,t])
+                                <span class="kw">break</span>
+                <span class="cmt">#ctf.destroy()
+</span>                ci+=<span class="dig">1</span>
+        <span class="kw">print</span> pairs
+        <span class="kw">return</span> pairs
+</pre>
+</body>
+</html>
