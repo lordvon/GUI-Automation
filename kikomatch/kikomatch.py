@@ -25,6 +25,7 @@ def orangeMatch(px,py,image):
 	rgb2 = image.getpixel((px,py))
 	return colorMatch(rgb1,rgb2,tol)
 
+
 def findGameArea(topLeftCornerImage):
 	"""
 	Returns the coordinates of the top left corner of the game area.
@@ -130,12 +131,36 @@ pyautogui.moveTo(vcenter[0],vcenter[1])
 hcenter = [firstGreen[0]+innerHeight/2,firstGreen[1]+borderHeight+2]
 pyautogui.moveTo(hcenter[0],hcenter[1])
 
-vcounter = 1
-while orangeMatch(vcenter[0],vcenter[1]+vcounter*tileSize,screenshot):
-	vcounter+=1
+rows = 1
+while orangeMatch(vcenter[0],vcenter[1]+rows*tileSize,screenshot):
+	rows+=1
 
-hcounter = 1
-while orangeMatch(hcenter[0]+hcounter*tileSize,hcenter[1],screenshot):
-	hcounter+=1
+cols = 1
+while orangeMatch(hcenter[0]+cols*tileSize,hcenter[1],screenshot):
+	cols+=1
 
-print "Grid dimension (row x col):",vcounter,hcounter
+print "Grid dimension (row x col):",rows,cols
+
+#DETERMINE CLICK / PROBE LOCATIONS
+def init2d(rows,cols):
+	mat = []
+	for r in range(rows):
+		mat.append([])
+		for c in range(cols):
+			mat[r].append(cols)
+	return mat
+
+backgrounds = init2d(rows,cols)
+colors = init2d(rows,cols)
+
+bgstart = (firstOrange[0]+cols,firstOrange[1]+rows)
+colorOffset = (tileSize/2,tileSize/2)
+for r in range(rows):
+	for c in range(cols):
+		bgx = bgstart[0]+c*tileSize
+		bgy = bgstart[1]+r*tileSize
+		backgrounds[r][c] = (bgx,bgy)
+		colors[r][c] = (bgx+colorOffset[0],bgy+colorOffset[1])
+
+# START THE GAME!
+#pyautogui.click()
